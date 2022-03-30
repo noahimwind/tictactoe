@@ -68,6 +68,43 @@ def current_user(user):
     if user: return "x"
     else: return "o"
 
+def is_win(user, board):
+    if check_row(user, board): return True
+    elif check_col(user, board): return True
+    elif check_diag(user, board): return True
+    return False
+
+def check_row(user, board):
+    for row in board:
+        complete_row = True
+        for slot in row:
+            if slot != user:
+                complete_row = False
+                break 
+        if complete_row: return True
+    return False
+
+def check_col(user, board):
+    for col in range(3):
+        complete_col = True
+        for row in range(3):
+            if board[row][col] != user:
+                complete_col = False
+                break
+        if complete_col: return True
+    return False
+
+def check_diag(user, board):
+    #top left to bottom right
+    if board[0][0] == user and board[1][1] == user and board[2][2] == user:
+        return True
+    elif board[0][2] == user and board[1][1] == user and board[2][0] == user:
+        return True
+    else:
+        return False
+
+
+#   gameplay    ------------------------------------------------------------------------------------------
 while True:
     active_user = current_user(user)
     print_board(board)
@@ -78,9 +115,11 @@ while True:
         continue
     user_input = int(user_input) - 1
     coords = coordinates(user_input)
-    #board[0][0] = "x"
     if is_taken(coords, board):
         print("please try again")
         continue
     add_to_board(coords, board, active_user)
+    if is_win(active_user, board):
+        print(f"{active_user} won.")
+        break
     user = not user
